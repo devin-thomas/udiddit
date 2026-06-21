@@ -2,6 +2,7 @@ node_modules/
 .pglite/
 output/
 playwright/
+.playwright-cli/
 *.log
 *.tmp
 *.bak
