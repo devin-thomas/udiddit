@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Udiddit SQL Project</title>
+  <style>
+    :root {
+      --bg: #f6f3ee;
+      --panel: rgba(255, 255, 255, 0.88);
+      --ink: #1e2428;
+      --muted: #59656f;
+      --accent: #0b6e4f;
+      --accent-2: #d17b0f;
+      --border: rgba(30, 36, 40, 0.12);
+      --shadow: 0 24px 60px rgba(27, 39, 51, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(209, 123, 15, 0.16), transparent 28%),
+        radial-gradient(circle at top right, rgba(11, 110, 79, 0.2), transparent 30%),
+        linear-gradient(180deg, #fbfaf8 0%, var(--bg) 100%);
+    }
+
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 48px 20px 72px;
+    }
+
+    .hero,
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .hero {
+      padding: 36px;
+      margin-bottom: 24px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(11, 110, 79, 0.1);
+      color: var(--accent);
+      font-size: 0.85rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    h1, h2 {
+      margin: 0 0 14px;
+      line-height: 1.05;
+    }
+
+    h1 {
+      margin-top: 18px;
+      font-size: clamp(2.4rem, 5vw, 4.4rem);
+    }
+
+    h2 {
+      font-size: 1.5rem;
+    }
+
+    p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 1.04rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-top: 24px;
+    }
+
+    .panel {
+      padding: 24px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 14px;
+      margin-top: 28px;
+    }
+
+    .stat {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(11, 110, 79, 0.06);
+      border: 1px solid rgba(11, 110, 79, 0.1);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.8rem;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    ul {
+      margin: 14px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration-thickness: 2px;
+      text-underline-offset: 3px;
+    }
+
+    .links a {
+      display: inline-block;
+      margin: 10px 14px 0 0;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(209, 123, 15, 0.1);
+      color: #8b4e06;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .links a:hover {
+      background: rgba(209, 123, 15, 0.18);
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <span class="eyebrow">Udacity SQL Nanodegree</span>
+      <h1>Udiddit, normalized and migration-ready.</h1>
+      <p>
+        This project redesigns the starter Udiddit schema into a relational PostgreSQL model,
+        migrates the supplied denormalized data, and documents the work in a submission-ready
+        report. The final solution emphasizes data integrity, clean constraints, practical indexing,
+        and reviewer-friendly deliverables.
+      </p>
+
+      <div class="stats">
+        <div class="stat"><strong>5</strong><span>normalized tables</span></div>
+        <div class="stat"><strong>50,000</strong><span>posts migrated</span></div>
+        <div class="stat"><strong>100,000</strong><span>comments migrated</span></div>
+        <div class="stat"><strong>499,710</strong><span>votes migrated</span></div>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section class="panel">
+        <h2>What Changed</h2>
+        <ul>
+          <li>Split users, topics, posts, comments, and votes into a normalized schema.</li>
+          <li>Added named constraints for uniqueness, non-empty content, referential integrity, and one-vote-per-user rules.</li>
+          <li>Added targeted indexes for moderation, activity, and comment-thread queries.</li>
+          <li>Included migration SQL and validation SQL for repeatable review.</li>
+        </ul>
+      </section>
+
+      <section class="panel">
+        <h2>Reviewer Assets</h2>
+        <p>
+          The repository includes the completed report, schema, migration, validation checks,
+          and example query set used to demonstrate rubric coverage and stand-out work.
+        </p>
+        <div class="links">
+          <a href="https://github.com/devin-thomas/udiddit/blob/main/README.md">README</a>
+          <a href="https://github.com/devin-thomas/udiddit/blob/main/sql/01_normalized_schema.sql">Schema SQL</a>
+          <a href="https://github.com/devin-thomas/udiddit/blob/main/sql/02_migrate_data.sql">Migration SQL</a>
+          <a href="https://github.com/devin-thomas/udiddit/blob/main/sql/03_dql_examples.sql">DQL Examples</a>
+          <a href="https://github.com/devin-thomas/udiddit/blob/main/udiddit-submission.docx">Submission DOCX</a>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Validation Snapshot</h2>
+        <ul>
+          <li>Source row counts match the migrated row counts for posts, comments, topics, users, and votes.</li>
+          <li>Post content rules are enforced so a post contains either a URL or text, but never both.</li>
+          <li>Comment threading supports arbitrary depth while keeping parent comments on the same post.</li>
+          <li>Votes enforce one non-null user vote per post and preserve dissociated votes after user deletion.</li>
+        </ul>
+      </section>
+    </div>
+  </main>
+</body>
+</html>
