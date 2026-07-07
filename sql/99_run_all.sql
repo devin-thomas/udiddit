@@ -1,3 +1,7 @@
+\echo 'Resetting public schema'
+DROP SCHEMA IF EXISTS public CASCADE;
+CREATE SCHEMA public;
+
 \echo 'Loading starter schema and data from bad-db.sql'
 \i /workspace/bad-db.sql
 
