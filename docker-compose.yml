@@ -1,0 +1,21 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: udiddit-postgres
+    environment:
+      POSTGRES_DB: udiddit
+      POSTGRES_USER: udiddit
+      POSTGRES_PASSWORD: udiddit
+    ports:
+      - "5432:5432"
+    volumes:
+      - udiddit_pgdata:/var/lib/postgresql/data
+      - .:/workspace
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U udiddit -d udiddit"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  udiddit_pgdata:
