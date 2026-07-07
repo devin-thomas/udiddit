@@ -3,64 +3,45 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Udiddit SQL Project</title>
+  <title>Udiddit PostgreSQL Case Study</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #050806;
       --panel: #0b120d;
-      --panel-2: #0f1711;
       --line: #1c2a1f;
-      --line-strong: #26422b;
       --text: #f5f8f4;
       --muted: #a5b3a7;
       --green: #2c7a3f;
       --green-bright: #56b26d;
-      --green-soft: #183120;
       --gold: #d8b260;
-      --shadow: 0 18px 40px rgba(0, 0, 0, 0.34);
-      --max: 1160px;
+      --max: 1120px;
       --radius: 18px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
       margin: 0;
-      font-family: "Source Sans 3", "Segoe UI", sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--text);
       background:
         radial-gradient(circle at top right, rgba(44, 122, 63, 0.18), transparent 28%),
-        radial-gradient(circle at top left, rgba(86, 178, 109, 0.1), transparent 30%),
-        linear-gradient(180deg, #081009 0%, #050806 42%, #071009 100%);
-      line-height: 1.45;
-      overflow-x: hidden;
+        linear-gradient(180deg, #081009 0%, var(--bg) 48%, #071009 100%);
+      line-height: 1.5;
     }
 
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    .site-header,
-    .hero,
-    .section,
-    .site-footer {
-      padding-left: 1.5rem;
-      padding-right: 1.5rem;
+    a { color: inherit; text-decoration: none; }
+    code {
+      color: var(--gold);
+      background: rgba(216, 178, 96, 0.08);
+      border: 1px solid rgba(216, 178, 96, 0.18);
+      border-radius: 0.4rem;
+      padding: 0.05rem 0.35rem;
     }
 
     .inner {
-      max-width: var(--max);
+      width: min(var(--max), calc(100% - 2rem));
       margin: 0 auto;
     }
 
@@ -70,406 +51,144 @@
       z-index: 10;
       backdrop-filter: blur(16px);
       background: rgba(5, 8, 6, 0.84);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     }
 
     .site-header .inner {
+      min-height: 70px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 1rem;
-      min-height: 72px;
     }
 
-    .brand {
-      font-size: 1.1rem;
-      font-weight: 700;
-      letter-spacing: 0.01em;
-    }
+    .brand { font-weight: 800; letter-spacing: 0.01em; }
+    .brand span { color: var(--green-bright); }
+    .nav { display: flex; flex-wrap: wrap; gap: 1rem; color: var(--muted); }
+    .nav a:hover { color: var(--text); }
 
-    .brand span {
-      color: var(--green-bright);
-    }
-
-    .nav {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1.25rem;
-      color: var(--muted);
-      font-size: 0.98rem;
-    }
-
-    .nav a:hover,
-    .nav a:focus-visible {
-      color: var(--text);
-    }
-
-    .hero {
-      padding-top: 4rem;
-      padding-bottom: 2rem;
-    }
-
+    .hero { padding: 4rem 0 2rem; }
     .hero-grid {
       display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+      grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.9fr);
       gap: 2rem;
       align-items: end;
     }
 
-    h1,
-    h2,
-    h3,
-    p {
-      margin: 0;
-    }
-
+    h1, h2, h3, p { margin: 0; }
     h1 {
-      max-width: 11ch;
-      font-size: clamp(3rem, 6vw, 5.35rem);
+      max-width: 12ch;
+      font-size: clamp(3rem, 6vw, 5.3rem);
       line-height: 0.98;
-      letter-spacing: -0.04em;
-      font-weight: 800;
+      letter-spacing: -0.045em;
     }
 
-    .hero-copy p {
-      max-width: 42rem;
-      margin-top: 1.25rem;
-      font-size: clamp(1.2rem, 1.6vw, 1.75rem);
-      line-height: 1.4;
+    .hero p {
+      margin-top: 1.2rem;
+      max-width: 44rem;
       color: #edf3ed;
+      font-size: clamp(1.15rem, 1.5vw, 1.55rem);
     }
 
-    .hero-copy p.secondary {
-      color: var(--muted);
-    }
-
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      margin-top: 2rem;
-    }
+    .hero .secondary { color: var(--muted); }
+    .actions { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 2rem; }
 
     .button {
       display: inline-flex;
+      min-height: 56px;
+      min-width: 180px;
       align-items: center;
       justify-content: center;
-      min-width: 216px;
-      min-height: 68px;
-      padding: 0.95rem 1.6rem;
-      border-radius: 18px;
+      padding: 0.85rem 1.25rem;
+      border-radius: 16px;
       border: 2px solid var(--green-bright);
-      color: var(--text);
-      font-size: 1.08rem;
-      font-weight: 700;
-      letter-spacing: 0.01em;
-      transition: transform 180ms ease, background-color 180ms ease, border-color 180ms ease;
+      font-weight: 750;
     }
 
-    .button:hover,
-    .button:focus-visible {
-      transform: translateY(-1px);
-    }
+    .button.primary { background: var(--green); border-color: var(--green); }
+    .button.secondary { color: var(--green-bright); }
+    .button:hover { transform: translateY(-1px); }
 
-    .button.primary {
-      background: var(--green);
-      border-color: var(--green);
-    }
-
-    .button.primary:hover,
-    .button.primary:focus-visible {
-      background: #236534;
-      border-color: #236534;
-    }
-
-    .button.secondary {
-      background: transparent;
-      color: var(--green-bright);
-    }
-
-    .hero-panel {
-      padding: 1.5rem;
-      border-radius: 24px;
-      border: 1px solid var(--line-strong);
-      background: linear-gradient(180deg, rgba(15, 23, 17, 0.98), rgba(9, 14, 10, 0.98));
-      box-shadow: var(--shadow);
-    }
-
-    .hero-panel h2 {
-      font-size: 1rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: var(--green-bright);
-    }
-
-    .hero-panel p {
-      margin-top: 0.9rem;
-      color: var(--muted);
-      font-size: 1rem;
-    }
-
-    .hero-panel strong {
-      display: block;
-      margin-top: 1.1rem;
-      font-size: 2.6rem;
-      line-height: 1;
-      color: var(--text);
-    }
-
-    .section {
-      padding-top: 1.5rem;
-      padding-bottom: 1.5rem;
-    }
-
-    .section-title {
-      margin-bottom: 1.1rem;
-      font-size: clamp(2rem, 3vw, 2.8rem);
-      line-height: 1.05;
-      letter-spacing: -0.03em;
-      font-weight: 800;
-    }
-
-    .section-intro {
-      max-width: 46rem;
-      color: var(--muted);
-      font-size: 1.08rem;
-      line-height: 1.55;
-    }
-
-    .metrics {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 1rem;
-      margin-top: 1.5rem;
-    }
-
-    .metric {
-      padding: 1.3rem 1.2rem;
+    .panel, .card, .metric {
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      background: rgba(11, 18, 13, 0.92);
-      box-shadow: var(--shadow);
-    }
-
-    .metric-label {
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
-
-    .metric-value {
-      margin-top: 0.45rem;
-      font-size: clamp(1.8rem, 2.4vw, 2.35rem);
-      line-height: 1;
-      font-weight: 800;
-    }
-
-    .metric-note {
-      margin-top: 0.6rem;
-      color: #d4ddd4;
-      font-size: 0.95rem;
-    }
-
-    .analysis-grid,
-    .resource-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
-      gap: 1rem;
-      margin-top: 1.6rem;
-    }
-
-    .card {
-      padding: 1.4rem;
-      border: 1px solid var(--line);
-      border-radius: 22px;
       background: rgba(11, 18, 13, 0.94);
-      box-shadow: var(--shadow);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
     }
 
-    .card h3 {
-      font-size: 1.35rem;
-      line-height: 1.15;
-      font-weight: 700;
+    .panel { padding: 1.4rem; }
+    .panel h2 {
+      color: var(--green-bright);
+      font-size: 0.95rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
     }
-
-    .card p {
-      margin-top: 0.8rem;
-      color: var(--muted);
-      font-size: 1rem;
-      line-height: 1.55;
-    }
-
-    .callout-list,
-    .resource-list,
-    .validation-list {
-      display: grid;
-      gap: 0.95rem;
-      margin-top: 1rem;
-      padding: 0;
-      list-style: none;
-    }
-
-    .callout-item,
-    .resource-item,
-    .validation-item {
-      padding: 1rem 1.05rem;
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.02);
-    }
-
-    .callout-item strong,
-    .resource-item strong,
-    .validation-item strong {
+    .panel strong {
       display: block;
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--text);
+      margin-top: 0.9rem;
+      font-size: 2.4rem;
+      line-height: 1;
     }
+    .panel p { margin-top: 0.8rem; color: var(--muted); font-size: 1rem; }
 
-    .callout-item span,
-    .resource-item span,
-    .validation-item span {
-      display: block;
-      margin-top: 0.3rem;
+    .section { padding: 1.8rem 0; }
+    .section-title {
+      margin-bottom: 0.85rem;
+      font-size: clamp(2rem, 3vw, 2.75rem);
+      line-height: 1.05;
+      letter-spacing: -0.035em;
+    }
+    .section-intro {
+      max-width: 48rem;
       color: var(--muted);
-      font-size: 0.96rem;
-      line-height: 1.5;
+      font-size: 1.08rem;
     }
 
-    .schema-shell {
-      margin-top: 1rem;
-      padding: 1rem;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      background:
-        linear-gradient(180deg, rgba(24, 49, 32, 0.45), rgba(11, 18, 13, 0.2)),
-        rgba(255, 255, 255, 0.01);
-    }
-
-    .schema-grid {
+    .metrics, .grid, .schema-grid {
       display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 0.75rem;
+      gap: 1rem;
+      margin-top: 1.4rem;
     }
+    .metrics { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .schema-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+
+    .metric, .card { padding: 1.25rem; }
+    .metric-label { color: var(--muted); }
+    .metric-value { margin-top: 0.35rem; font-size: 2.05rem; font-weight: 850; }
+    .metric-note { margin-top: 0.4rem; color: #d4ddd4; font-size: 0.95rem; }
+
+    .card h3 { font-size: 1.3rem; }
+    .card p, .card li { color: var(--muted); }
+    .card p { margin-top: 0.7rem; }
+    .card ul { padding-left: 1.1rem; }
+    .card li { margin-top: 0.65rem; }
 
     .schema-node {
       padding: 1rem;
-      border: 1px solid var(--line-strong);
+      border: 1px solid #26422b;
       border-radius: 16px;
       background: rgba(10, 18, 12, 0.95);
     }
+    .schema-node strong { display: block; color: var(--green-bright); }
+    .schema-node span { display: block; margin-top: 0.35rem; color: var(--muted); font-size: 0.95rem; }
 
-    .schema-node strong {
-      display: block;
-      font-size: 1rem;
-      color: var(--green-bright);
+    .commands {
+      margin-top: 1rem;
+      padding: 1rem;
+      overflow-x: auto;
+      border-radius: 16px;
+      border: 1px solid #26422b;
+      background: #061008;
+      color: #edf3ed;
     }
 
-    .schema-node span {
-      display: block;
-      margin-top: 0.35rem;
-      color: var(--muted);
-      font-size: 0.93rem;
-      line-height: 1.45;
-    }
+    .download-actions { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 1rem; }
+    .site-footer { padding: 2rem 0 3rem; color: var(--muted); }
 
-    .resource-item a,
-    .download-actions a {
-      color: var(--green-bright);
-    }
-
-    .resource-item a:hover,
-    .download-actions a:hover {
-      color: var(--text);
-    }
-
-    .code-chip {
-      display: inline-block;
-      margin-top: 0.7rem;
-      padding: 0.3rem 0.7rem;
-      border-radius: 999px;
-      border: 1px solid rgba(216, 178, 96, 0.28);
-      background: rgba(216, 178, 96, 0.08);
-      color: var(--gold);
-      font-size: 0.88rem;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-    }
-
-    .download-card {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      gap: 1rem;
-      align-items: center;
-    }
-
-    .download-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.8rem;
-    }
-
-    .site-footer {
-      padding-top: 1rem;
-      padding-bottom: 3rem;
-    }
-
-    .site-footer p {
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
-
-    @media (max-width: 980px) {
-      .hero-grid,
-      .analysis-grid,
-      .resource-grid,
-      .metrics,
-      .schema-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 720px) {
-      .site-header .inner {
-        align-items: start;
-        padding-top: 1rem;
-        padding-bottom: 1rem;
-        flex-direction: column;
-      }
-
-      .nav {
-        width: 100%;
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 0.75rem 1rem;
-        font-size: 1rem;
-      }
-
-      .hero {
-        padding-top: 2.5rem;
-      }
-
-      h1 {
-        max-width: 100%;
-        font-size: clamp(1.95rem, 9.3vw, 3rem);
-        line-height: 1.02;
-      }
-
-      .hero-copy p {
-        font-size: 1.08rem;
-      }
-
-      .actions,
-      .download-actions {
-        flex-direction: column;
-      }
-
-      .button {
-        width: 100%;
-        min-width: 0;
-      }
+    @media (max-width: 900px) {
+      .hero-grid, .metrics, .grid, .schema-grid { grid-template-columns: 1fr; }
+      h1 { max-width: 100%; }
     }
   </style>
 </head>
@@ -482,6 +201,7 @@
         <a href="#schema">Schema</a>
         <a href="#migration">Migration</a>
         <a href="#validation">Validation</a>
+        <a href="#run">Run It</a>
         <a href="#files">Files</a>
       </nav>
     </div>
@@ -489,61 +209,57 @@
 
   <section class="hero" id="overview">
     <div class="inner hero-grid">
-      <div class="hero-copy">
-        <h1>From a fragile dump to a reviewer-ready relational design.</h1>
+      <div>
+        <h1>From fragile dump to validated relational design.</h1>
         <p>
-          This Udiddit project rebuilds a denormalized social news schema into a clean PostgreSQL data model,
-          migrates the supplied source data, and packages the work in a submission-ready report and portfolio site.
+          Udiddit refactors a denormalized social-news dataset into a normalized PostgreSQL model with constraints,
+          indexes, migration scripts, example queries, and validation checks.
         </p>
         <p class="secondary">
-          The goal was not just to satisfy the rubric, but to make the reasoning behind the schema, migration
-          order, and validation story quick to understand on the web.
+          The project started as a SQL Nanodegree assignment, but this public version is organized as a database
+          migration and data-modeling portfolio case study.
         </p>
         <div class="actions">
-          <a class="button secondary" href="https://github.com/devin-thomas/udiddit/blob/main/udiddit-submission.docx">Open Submission Doc</a>
+          <a class="button secondary" href="https://github.com/devin-thomas/udiddit/blob/main/udiddit-submission.docx">Open Supporting Report</a>
           <a class="button primary" href="https://github.com/devin-thomas/udiddit">Open Repository</a>
         </div>
       </div>
 
-      <aside class="hero-panel" aria-label="Key result">
+      <aside class="panel" aria-label="Key result">
         <h2>Most Important Result</h2>
         <strong>499,710 votes</strong>
         <p>
-          The final migration preserves every post, comment, topic, user, and vote from the supplied starter data
-          while moving the project into a normalized five-table design.
+          The final migration preserves every post, comment, topic, user, and vote from the supplied starter data while
+          moving the project into a normalized five-table design.
         </p>
-        <p>
-          That means the new schema is not only cleaner on paper — it is proven against the actual project dataset.
-        </p>
+        <p>The schema is not only cleaner on paper. It is checked against the actual project dataset.</p>
       </aside>
     </div>
   </section>
 
   <main>
     <section class="section">
-      <div class="inner">
-        <div class="metrics" aria-label="Summary metrics">
-          <article class="metric">
-            <div class="metric-label">Normalized Tables</div>
-            <div class="metric-value">5</div>
-            <div class="metric-note">users, topics, posts, comments, votes</div>
-          </article>
-          <article class="metric">
-            <div class="metric-label">Posts Migrated</div>
-            <div class="metric-value">50,000</div>
-            <div class="metric-note">all starter posts preserved</div>
-          </article>
-          <article class="metric">
-            <div class="metric-label">Comments Migrated</div>
-            <div class="metric-value">100,000</div>
-            <div class="metric-note">loaded as top-level legacy comments</div>
-          </article>
-          <article class="metric">
-            <div class="metric-label">Distinct Users</div>
-            <div class="metric-value">11,077</div>
-            <div class="metric-note">authors, commenters, and voters combined</div>
-          </article>
-        </div>
+      <div class="inner metrics" aria-label="Summary metrics">
+        <article class="metric">
+          <div class="metric-label">Normalized Tables</div>
+          <div class="metric-value">5</div>
+          <div class="metric-note">users, topics, posts, comments, votes</div>
+        </article>
+        <article class="metric">
+          <div class="metric-label">Posts Migrated</div>
+          <div class="metric-value">50,000</div>
+          <div class="metric-note">all starter posts preserved</div>
+        </article>
+        <article class="metric">
+          <div class="metric-label">Comments Migrated</div>
+          <div class="metric-value">100,000</div>
+          <div class="metric-note">loaded as top-level legacy comments</div>
+        </article>
+        <article class="metric">
+          <div class="metric-label">Distinct Users</div>
+          <div class="metric-value">11,077</div>
+          <div class="metric-note">authors, commenters, and voters combined</div>
+        </article>
       </div>
     </section>
 
@@ -551,63 +267,31 @@
       <div class="inner">
         <h2 class="section-title">Schema Design</h2>
         <p class="section-intro">
-          The redesign addresses the three biggest weaknesses in the starter schema: duplicated text entities,
-          comma-separated votes, and flat comments. The new model adds real constraints, intentional foreign-key
-          behavior, and indexes shaped around the moderation and activity queries from the rubric.
+          The redesign addresses duplicated text entities, comma-separated votes, and flat comments. The new model adds
+          real constraints, intentional foreign-key behavior, and indexes shaped around moderation, lookup, activity, and
+          scoring queries.
         </p>
 
-        <div class="analysis-grid">
+        <div class="grid">
           <article class="card">
             <h3>What the redesign fixes</h3>
-            <ul class="callout-list">
-              <li class="callout-item">
-                <strong>Entity duplication</strong>
-                <span>Usernames and topic names move out of free-text columns and into dedicated tables with uniqueness enforced at the database level.</span>
-              </li>
-              <li class="callout-item">
-                <strong>Votes in first normal form</strong>
-                <span>Each vote becomes its own row, making one-vote-per-user enforceable and making score queries straightforward and index-friendly.</span>
-              </li>
-              <li class="callout-item">
-                <strong>Thread-ready comments</strong>
-                <span>Comments gain a self-reference so the platform can support arbitrary nesting instead of only a flat reply list.</span>
-              </li>
+            <ul>
+              <li><strong>Entity duplication:</strong> usernames and topic names move into dedicated tables with uniqueness enforced.</li>
+              <li><strong>Votes in first normal form:</strong> each vote becomes a row, making one-vote-per-user enforceable.</li>
+              <li><strong>Thread-ready comments:</strong> comments gain a self-reference for nested replies.</li>
             </ul>
           </article>
 
           <article class="card">
             <h3>Schema at a glance</h3>
-            <p>
-              Deletes cascade where content should disappear together, and user references fall back to
-              <code>NULL</code> where the rubric calls for dissociation instead of removal.
-            </p>
-
-            <div class="schema-shell">
-              <div class="schema-grid">
-                <div class="schema-node">
-                  <strong>users</strong>
-                  <span>Unique usernames, optional last-login tracking</span>
-                </div>
-                <div class="schema-node">
-                  <strong>topics</strong>
-                  <span>Unique topic names and optional descriptions</span>
-                </div>
-                <div class="schema-node">
-                  <strong>posts</strong>
-                  <span>Exactly one of URL or text content, linked to topic and user</span>
-                </div>
-                <div class="schema-node">
-                  <strong>comments</strong>
-                  <span>Self-referential threads scoped to a post</span>
-                </div>
-                <div class="schema-node">
-                  <strong>votes</strong>
-                  <span>One row per user-post vote with values of 1 or -1</span>
-                </div>
-              </div>
+            <p>Deletes cascade where content should disappear together, and user references fall back to <code>NULL</code> where dissociation is preferred.</p>
+            <div class="schema-grid">
+              <div class="schema-node"><strong>users</strong><span>Unique usernames and optional last-login tracking</span></div>
+              <div class="schema-node"><strong>topics</strong><span>Unique topic names and optional descriptions</span></div>
+              <div class="schema-node"><strong>posts</strong><span>Exactly one URL or text body</span></div>
+              <div class="schema-node"><strong>comments</strong><span>Self-referential threads scoped to a post</span></div>
+              <div class="schema-node"><strong>votes</strong><span>One row per user-post vote</span></div>
             </div>
-
-            <div class="code-chip">Named constraints + targeted indexes</div>
           </article>
         </div>
       </div>
@@ -617,41 +301,28 @@
       <div class="inner">
         <h2 class="section-title">Migration Strategy</h2>
         <p class="section-intro">
-          The migration script follows the dependency chain of the new model: users first, then topics, posts,
-          comments, and votes. That sequencing keeps every foreign-key reference valid and preserves the original
-          post and comment IDs from the starter dump.
+          The migration follows the dependency chain of the new model: users first, then topics, posts, comments, and
+          votes. That order keeps foreign-key references valid and preserves the original post and comment IDs.
         </p>
 
-        <div class="analysis-grid">
+        <div class="grid">
           <article class="card">
             <h3>Why the order matters</h3>
-            <ul class="callout-list">
-              <li class="callout-item">
-                <strong>Users first</strong>
-                <span>The migration collects authors, commenters, and vote participants so no downstream insert depends on a missing account.</span>
-              </li>
-              <li class="callout-item">
-                <strong>Topics before posts</strong>
-                <span>Posts resolve topic IDs through the normalized topics table rather than duplicating topic names on every row.</span>
-              </li>
-              <li class="callout-item">
-                <strong>Votes last</strong>
-                <span>Votes are exploded from the old comma-separated text fields only after both posts and users are in place.</span>
-              </li>
+            <ul>
+              <li><strong>Users first:</strong> authors, commenters, and vote participants are unified before dependent rows are inserted.</li>
+              <li><strong>Topics before posts:</strong> posts resolve topic IDs through the normalized topics table.</li>
+              <li><strong>Votes last:</strong> votes are exploded from old comma-separated text fields after posts and users exist.</li>
             </ul>
           </article>
 
           <article class="card">
             <h3>Data-quality tradeoff documented explicitly</h3>
             <p>
-              The supplied dataset contains 152 legacy titles longer than the stated 100-character product rule.
-              Instead of truncating source data, the final schema stores titles up to 150 characters and documents
-              that mismatch in the submission report.
+              The supplied dataset contains 152 legacy titles longer than the stated 100-character product rule. Instead
+              of truncating source data, the final schema stores titles up to 150 characters and documents that mismatch
+              in the supporting report.
             </p>
-            <p>
-              That keeps the migration lossless while still making the discrepancy visible to a reviewer.
-            </p>
-            <div class="code-chip">152 starter titles exceed 100 chars</div>
+            <p>That keeps the migration lossless while making the discrepancy explicit in the project documentation.</p>
           </article>
         </div>
       </div>
@@ -661,74 +332,59 @@
       <div class="inner">
         <h2 class="section-title">Validation Story</h2>
         <p class="section-intro">
-          The finished project includes a dedicated validation script and example DQL set so the reviewer can
-          confirm counts, integrity rules, and rubric-driven query behavior without digging through the migration by hand.
+          The project includes a dedicated validation script and example DQL set so users can confirm counts, integrity
+          rules, and query behavior without digging through the migration by hand.
         </p>
 
-        <div class="resource-grid">
+        <div class="grid">
           <article class="card">
             <h3>What was checked</h3>
-            <ul class="validation-list">
-              <li class="validation-item">
-                <strong>Source-to-target counts</strong>
-                <span>Users, topics, posts, comments, and votes all match the expected totals after migration.</span>
-              </li>
-              <li class="validation-item">
-                <strong>Post content rule</strong>
-                <span>Every migrated post contains either a URL or text content, but never both and never neither.</span>
-              </li>
-              <li class="validation-item">
-                <strong>Vote integrity</strong>
-                <span>Votes are restricted to 1 and -1, and no non-null user can vote twice on the same post.</span>
-              </li>
-              <li class="validation-item">
-                <strong>Stand-out query coverage</strong>
-                <span>The repo includes a JSON comment-tree query with three levels of nesting in addition to the rubric’s core DQL examples.</span>
-              </li>
+            <ul>
+              <li>Users, topics, posts, comments, and votes match expected totals after migration.</li>
+              <li>Every migrated post contains either a URL or text content, but never both and never neither.</li>
+              <li>Votes are restricted to <code>1</code> and <code>-1</code>, with duplicate non-null user votes rejected.</li>
+              <li>The repo includes a three-level nested JSON comment-tree query.</li>
             </ul>
           </article>
 
           <article class="card">
-            <h3>Final verified totals</h3>
-            <ul class="validation-list">
-              <li class="validation-item">
-                <strong>11,077 users</strong>
-                <span>Unified from post authors, comment authors, and vote participants.</span>
-              </li>
-              <li class="validation-item">
-                <strong>89 topics</strong>
-                <span>Normalized from repeated topic-name text values.</span>
-              </li>
-              <li class="validation-item">
-                <strong>50,000 posts / 100,000 comments</strong>
-                <span>Starter content preserved with original post and comment identifiers.</span>
-              </li>
-              <li class="validation-item">
-                <strong>499,710 votes</strong>
-                <span>Exploded safely from the denormalized upvote and downvote text columns.</span>
-              </li>
+            <h3>Verified totals</h3>
+            <ul>
+              <li><strong>11,077 users</strong> unified from post authors, comment authors, and vote participants.</li>
+              <li><strong>89 topics</strong> normalized from repeated topic-name text values.</li>
+              <li><strong>50,000 posts / 100,000 comments</strong> preserved with original identifiers.</li>
+              <li><strong>499,710 votes</strong> exploded from denormalized upvote and downvote text columns.</li>
             </ul>
           </article>
         </div>
       </div>
     </section>
 
+    <section class="section" id="run">
+      <div class="inner">
+        <h2 class="section-title">Run It Locally</h2>
+        <p class="section-intro">
+          The repo now includes Docker Compose and Make commands so users can run the PostgreSQL migration and validation
+          flow without manually configuring a local database.
+        </p>
+        <pre class="commands">docker compose up -d
+make reset-db
+make validate</pre>
+      </div>
+    </section>
+
     <section class="section" id="files">
       <div class="inner">
-        <div class="card download-card">
-          <div>
-            <h2 class="section-title" style="font-size: clamp(1.8rem, 3vw, 2.5rem); margin-bottom: 0.5rem;">Project Files</h2>
-            <p class="section-intro" style="max-width: 40rem;">
-              Review the completed report, inspect the normalized DDL and migration SQL, or browse the full
-              repository history and GitHub Pages source.
-            </p>
-          </div>
+        <article class="card">
+          <h2 class="section-title">Project Files</h2>
+          <p class="section-intro">Inspect the schema, migration, validation script, or supporting report.</p>
           <div class="download-actions">
             <a class="button secondary" href="https://github.com/devin-thomas/udiddit/blob/main/sql/01_normalized_schema.sql">Schema SQL</a>
             <a class="button secondary" href="https://github.com/devin-thomas/udiddit/blob/main/sql/02_migrate_data.sql">Migration SQL</a>
-            <a class="button primary" href="https://github.com/devin-thomas/udiddit/blob/main/udiddit-submission.docx">Submission DOCX</a>
+            <a class="button secondary" href="https://github.com/devin-thomas/udiddit/blob/main/sql/04_validation.sql">Validation SQL</a>
+            <a class="button primary" href="https://github.com/devin-thomas/udiddit/blob/main/udiddit-submission.docx">Supporting Report</a>
           </div>
-        </div>
+        </article>
       </div>
     </section>
   </main>
