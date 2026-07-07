@@ -3,13 +3,16 @@ DB_USER := udiddit
 DB_NAME := udiddit
 PSQL := docker compose exec -T db psql -v ON_ERROR_STOP=1 -U $(DB_USER) -d $(DB_NAME)
 
-.PHONY: up down reset-db load-starter migrate examples validate psql logs
+.PHONY: up down clean-db reset-db load-starter migrate examples validate run-all psql logs
 
 up:
 	docker compose up -d
 
 down:
 	docker compose down
+
+clean-db:
+	$(PSQL) -c "DROP SCHEMA IF EXISTS public CASCADE; CREATE SCHEMA public;"
 
 load-starter:
 	$(PSQL) -f /workspace/bad-db.sql
@@ -24,7 +27,10 @@ examples:
 validate:
 	$(PSQL) -f /workspace/sql/04_validation.sql
 
-reset-db: up load-starter migrate examples validate
+run-all:
+	$(PSQL) -f /workspace/sql/99_run_all.sql
+
+reset-db: up clean-db load-starter migrate examples validate
 
 psql:
 	docker compose exec db psql -U $(DB_USER) -d $(DB_NAME)
